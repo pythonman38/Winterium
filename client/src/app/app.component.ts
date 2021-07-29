@@ -1,5 +1,5 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { ShoppingCartService } from './shopping-cart/shopping-cart.service';
 
 @Component({
   selector: 'app-root',
@@ -9,9 +9,17 @@ import { Component, OnInit } from '@angular/core';
 export class AppComponent implements OnInit {
   title = 'Winterium';
 
-  constructor(private http: HttpClient) {}
+  constructor(private shoppingCartService: ShoppingCartService) {}
 
   ngOnInit(): void {
+    const shoppingCartId = localStorage.getItem('shoppingCart_id');
+    if (shoppingCartId) {
+      this.shoppingCartService.getShoppingCart(shoppingCartId).subscribe(() => {
+        console.log('initialized shoppingcart');
+      }, error => {
+        console.log(error);
+      });
+    }
   }
 
 }

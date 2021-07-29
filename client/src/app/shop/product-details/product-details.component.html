@@ -6,10 +6,10 @@
         <h3>{{product.name}}</h3>
         <p class="price-style">{{product.price | currency}}</p>
         <div class="d-flex justify-content-start align-items-center">
-            <i class="fa fa-minus-circle mr-2 text-warning"></i>
-            <span class="font-weight-bold">2</span>
-            <i class="fa fa-plus-circle text-warning mx-2"></i>
-            <button class="btn btn-outline-secondary btn-lg ml-4">Add to Cart</button>
+            <i (click)="decrementQuantity()" class="fa fa-minus-circle mr-2 text-warning"></i>
+            <span class="font-weight-bold">{{quantity}}</span>
+            <i (click)="incrementQuantity()" class="fa fa-plus-circle text-warning mx-2"></i>
+            <button (click)="addItemToShoppingCart()" class="btn btn-outline-primary btn-lg ml-4">Add to Cart</button>
         </div>
     </div>
     <div class="row mt-5">
