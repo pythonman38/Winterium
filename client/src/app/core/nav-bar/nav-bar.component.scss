@@ -25,10 +25,15 @@ nav {
 }
 
 a {
+    cursor: pointer;
     text-decoration: none;
     color: #343a40;
 
     &.active {
         color: orange;
     }
+}
+
+.dropdown-menu {
+    cursor: pointer;
 }
