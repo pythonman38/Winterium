@@ -12,8 +12,10 @@ namespace Infrastructure.Services
     {
         private readonly IShoppingCartRepository _shoppingCartRepo;
         private readonly IUnitOfWork _unitOfWork;
-        public OrderService(IShoppingCartRepository shoppingCartRepo, IUnitOfWork unitOfWork)
+        private readonly IPaymentService _paymentService;
+        public OrderService(IShoppingCartRepository shoppingCartRepo, IUnitOfWork unitOfWork, IPaymentService paymentService)
         {
+            _paymentService = paymentService;
             _unitOfWork = unitOfWork;
             _shoppingCartRepo = shoppingCartRepo;
         }
@@ -39,17 +41,24 @@ namespace Infrastructure.Services
             // calculate subtotal
             var subtotal = items.Sum(item => item.Price * item.Quantity);
 
+            // check to see if order exists
+            var spec = new OrderByPaymentIntentIdSpecification(shoppingCart.PaymentIntentId);
+            var existingOrder = await _unitOfWork.Repository<Order>().GetEntityWithSpec(spec);
+
+            if (existingOrder != null)
+            {
+                _unitOfWork.Repository<Order>().Delete(existingOrder);
+                await _paymentService.CreateOrUpdatePaymentIntent(shoppingCart.PaymentIntentId);
+            }
+
             // create order
-            var order = new Order(items, buyerEmail, shippingAddress, deliveryMethod, subtotal);
+            var order = new Order(items, buyerEmail, shippingAddress, deliveryMethod, subtotal, shoppingCart.PaymentIntentId);
             _unitOfWork.Repository<Order>().Add(order);
 
             // save order to database
             var result = await _unitOfWork.Complete();
 
             if (result <= 0) return null;
-
-            // delete shopping cart
-            await _shoppingCartRepo.DeleteShoppingCartAsync(shoppingCartId);
 
             // return order to controller
             return order;
