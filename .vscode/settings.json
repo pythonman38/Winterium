@@ -1,3 +1,30 @@
 {
-    "angular.enable-strict-mode-prompt": false
+    "deploy.reloaded": {
+        "packages": [
+            {
+                "name": "Version 1.0.0",
+                "description": "Package version 1.0.0",
+
+                "files": [
+                    "publish/**"
+                ]
+            }
+        ],
+
+        "targets": [
+            {
+                "type": "sftp",
+                "name": "Linux",
+                "description": "SFTP folder",
+
+                "host": "104.248.56.41", "port": 22,
+                "user": "root", "password": "a36#wQiNxCMYPAd",
+
+                "dir": "/var/winterium",
+                "mappings": {
+                    "publish/**": "/"
+                }
+            }
+        ]
+    }
 }
